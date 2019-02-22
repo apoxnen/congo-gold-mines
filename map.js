@@ -166,10 +166,55 @@ function initMap() {
   // Initialize map
   var map = new google.maps.Map(document.getElementById('map'), {
     zoom: 6,
-    mapTypeControl: false,
+    mapTypeControl: true,
     streetViewControl: false,
-    styles: style
+    styles: style,
   });
+
+  // Control panel
+  function CenterControl(controlDiv, map, center) {
+    // We set up a variable for this since we're adding event listeners
+    // later.
+    var control = this;
+
+    // Create a div to hold the control.
+    var controlDiv = document.createElement('div');
+
+    // Set CSS for the control border
+    var controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = '#fff';
+    controlUI.style.border = '2px solid #fff';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.marginBottom = '22px';
+    controlUI.style.textAlign = 'center';
+    controlUI.title = 'Click to recenter the map';
+    controlDiv.appendChild(controlUI);
+
+    // Set CSS for the control interior
+    var controlText = document.createElement('div');
+    controlText.style.color = 'rgb(25,25,25)';
+    controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+    controlText.style.fontSize = '16px';
+    controlText.style.lineHeight = '38px';
+    controlText.style.paddingLeft = '5px';
+    controlText.style.paddingRight = '5px';
+    controlText.innerHTML = 'Control Panel';
+    controlUI.appendChild(controlText);
+
+
+    // Set the center property upon construction
+    control.center_ = center;
+    controlDiv.style.clear = 'both';
+
+    // Set up the click event listener for 'Center Map': Set the center of
+    // the map
+    // to the current center of the control.
+    controlDiv.addEventListener('click', function() {
+      var currentCenter = control.getCenter();
+      map.setCenter(currentCenter);
+    });
+
+  }
 
   // Center map on first mine using geocoding
   var geocoder = new google.maps.Geocoder();
@@ -185,6 +230,32 @@ function initMap() {
       }
     });
   }
+
+  function getAddress(geocoder, map, address) {
+    geocoder.geocode({'address': address}, function(results, status) {
+      if (status === 'OK') {
+        return (results[0].geometry.location);
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
+
+  CenterControl.prototype.center_ = null;
+  CenterControl.prototype.getCenter = function() {
+    this.center_ = address;
+  };
+
+  CenterControl.prototype.setCenter = function(center) {
+    this.center_ = address;
+  };
+
+  var controlDiv = document.createElement('div');
+  var centerControl = new CenterControl(controlDiv, map, getAddress(geocoder,map, address));
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
+  
+
+
 
   // Load GeoJSON that contains geographic information
   map.data.loadGeoJson('https://raw.githubusercontent.com/apoxnen/congo-gold-mines/master/data.json')
