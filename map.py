@@ -1,5 +1,6 @@
-from key import key
-from get_data import income_binning, pop_density_binning
+# These are not needed with the current dataset.
+# from key import key
+# from get_data import income_binning, pop_density_binning
 
 class Map(object):
     def __init__(self, filename = None):
@@ -22,8 +23,8 @@ class Map(object):
         html = ''.join(html)
 
         # API key
-        html = html.replace('YOUR_API_KEY_HERE', key)
-
+        #html = html.replace('YOUR_API_KEY_HERE', key)
+        """
         # Labels and colors for default relative median income visualizion
         labels, colors = income_binning(return_colors=True)
         html = html.replace('COLOR_DEFINITIONS', ','.join(colors))
@@ -35,7 +36,7 @@ class Map(object):
         labels.append('> {}'.format(labels[-1]))
         html = html.replace('COLOR_ALTERNATE_DEFINITIONS', ','.join(colors))
         html = html.replace('LABEL_ALTERNATE_DEFINITIONS', ','.join(str(label) for label in labels))
-
+        """
         return html
 
 def main():
